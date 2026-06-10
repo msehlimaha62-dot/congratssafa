@@ -4,7 +4,6 @@
    ============================================================ */
 
 :root {
-  /* color */
   --cream:        #f6f0e2;
   --cream-2:      #efe6d1;
   --parchment:    #e7dabb;
@@ -16,18 +15,20 @@
   --term-bg:      #16140f;
   --term-text:    #ecd9a0;
 
-  /* type */
   --display: "Fraunces", Georgia, serif;
   --body:    "Inter", system-ui, sans-serif;
   --mono:    "JetBrains Mono", ui-monospace, monospace;
 
-  /* space */
   --shell: min(1080px, 90vw);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+/* scroll-behavior smooth UNIQUEMENT sur desktop
+   Sur mobile/iOS Safari, smooth + window.scrollTo = conflit → autoscroll cassé */
+@media (hover: hover) {
+  html { scroll-behavior: smooth; }
+}
 
 body {
   background: var(--cream);
@@ -38,7 +39,6 @@ body {
   overflow-x: hidden;
 }
 
-/* subtle paper texture via layered gradients */
 body::before {
   content: "";
   position: fixed; inset: 0;
@@ -50,7 +50,6 @@ body::before {
 
 code { font-family: var(--mono); color: var(--gold-deep); font-size: .9em; }
 
-/* ---------- shared section scaffolding ---------- */
 main { position: relative; z-index: 1; }
 
 section {
@@ -68,7 +67,6 @@ section {
   margin-bottom: 1.1rem;
 }
 
-/* gold foil text */
 .gild {
   background: linear-gradient(95deg, var(--gold-deep) 0%, var(--gold-bright) 36%, #f3e0a4 50%, var(--gold-bright) 64%, var(--gold-deep) 100%);
   background-size: 200% 100%;
@@ -87,14 +85,14 @@ section {
   gap: 2.5rem;
   padding: 6vh 5vw;
   text-align: center;
-  background:
-    linear-gradient(180deg, var(--cream) 0%, var(--cream-2) 100%);
+  background: linear-gradient(180deg, var(--cream) 0%, var(--cream-2) 100%);
 }
-.hero__grain { position: absolute; inset: 0; pointer-events: none;
+.hero__grain {
+  position: absolute; inset: 0; pointer-events: none;
   background-image: radial-gradient(rgba(43,36,23,.05) 1px, transparent 1px);
-  background-size: 4px 4px; opacity: .5; }
+  background-size: 4px 4px; opacity: .5;
+}
 
-/* ---------- certificate reveal ---------- */
 .certificate {
   position: relative; z-index: 2;
   max-width: 760px;
@@ -132,6 +130,8 @@ section {
   text-decoration: none; border: none; border-bottom: 1px solid var(--parchment);
   background: none; cursor: pointer;
   padding: 0 0 .25rem; transition: color .3s, border-color .3s;
+  /* tap target confortable sur mobile */
+  min-height: 44px; display: inline-flex; align-items: flex-end;
 }
 .scroll-cue:hover { color: var(--gold-deep); border-color: var(--gold); }
 .scroll-cue:focus-visible { outline: 2px solid var(--gold-deep); outline-offset: 4px; }
@@ -163,7 +163,13 @@ section {
 .footer__top:hover { color: var(--gold-deep); }
 
 /* ---------- scroll reveal ---------- */
-[data-reveal] { opacity: 0; transform: translateY(22px); transition: opacity .8s ease, transform .8s ease; }
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity .8s ease, transform .8s ease;
+  /* will-change aide le browser mobile à préparer la transition */
+  will-change: opacity, transform;
+}
 [data-reveal].is-in { opacity: 1; transform: none; }
 
 /* ---------- mono utility ---------- */
@@ -171,7 +177,7 @@ section {
 
 /* ---------- responsive ---------- */
 @media (max-width: 620px) {
-  section { width: 86vw; }
+  section { width: 92vw; }
 }
 
 /* ---------- reduced motion ---------- */

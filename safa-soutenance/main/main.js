@@ -172,4 +172,4 @@
       if (playing) stopTour(); else startTour();
     });
   }
-})();git 
+})();
