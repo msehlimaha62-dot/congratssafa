@@ -9,12 +9,11 @@
 }
 
 .gallery__grid {
-  columns: 4 200px;
-  column-gap: .9rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: .9rem;
 }
 .gallery__cell {
-  break-inside: avoid;
-  margin-bottom: .9rem;
   border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
@@ -67,8 +66,11 @@
 .lightbox__close:hover, .lightbox__nav:hover { color: #fff6d8; }
 .lightbox__close:focus-visible, .lightbox__nav:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 3px; }
 
+@media (max-width: 768px) {
+  .gallery__grid { grid-template-columns: repeat(3, 1fr); }
+}
 @media (max-width: 540px) {
-  .gallery__grid { columns: 2 140px; }
+  .gallery__grid { grid-template-columns: repeat(2, 1fr); }
   .lightbox__nav { font-size: 2.4rem; }
 }
 

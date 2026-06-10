@@ -24,6 +24,11 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Bootstrap overrides — restore our design tokens */
+h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; margin: 0; }
+p { margin: 0; }
+ol, ul { list-style: none; margin: 0; padding: 0; }
+
 /* scroll-behavior smooth UNIQUEMENT sur desktop
    Sur mobile/iOS Safari, smooth + window.scrollTo = conflit → autoscroll cassé */
 @media (hover: hover) {
@@ -37,6 +42,8 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  /* ensure native vertical scroll is always allowed on touch devices */
+  touch-action: pan-y;
 }
 
 body::before {
@@ -67,19 +74,27 @@ section {
   margin-bottom: 1.1rem;
 }
 
+/* Solid gold fallback — visible when background-clip:text fails (some Safari iOS) */
 .gild {
-  background: linear-gradient(95deg, var(--gold-deep) 0%, var(--gold-bright) 36%, #f3e0a4 50%, var(--gold-bright) 64%, var(--gold-deep) 100%);
-  background-size: 200% 100%;
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
-  animation: shimmer 7s linear infinite;
+  color: var(--gold-deep);
+}
+/* Progressive enhancement: gradient clip text where supported */
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  .gild {
+    background: linear-gradient(95deg, var(--gold-deep) 0%, var(--gold-bright) 36%, #f3e0a4 50%, var(--gold-bright) 64%, var(--gold-deep) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 7s linear infinite;
+  }
 }
 @keyframes shimmer { to { background-position: -200% 0; } }
 
 /* ============ HERO ============ */
 .hero {
   position: relative; z-index: 1;
-  min-height: 100svh;
+  min-height: 100vh;    /* fallback: older Safari / iOS < 15.4 where svh is unsupported */
+  min-height: 100svh;   /* modern: excludes browser chrome bars */
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: 2.5rem;

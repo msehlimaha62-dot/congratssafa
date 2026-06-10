@@ -56,17 +56,24 @@
   const btnPrev  = document.getElementById("lightbox-prev");
   const btnNext  = document.getElementById("lightbox-next");
   let current = 0;
+  let savedScrollY = 0;
 
   function openLightbox(i) {
     current = i;
     boxImg.src = sources[i];
     box.hidden = false;
+    savedScrollY = window.scrollY || window.pageYOffset || 0;
+    /* Lock scroll: set on both html and body — body alone is insufficient on iOS Safari */
     document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
     btnClose.focus();
   }
   function closeLightbox() {
     box.hidden = true;
     document.body.style.overflow = "";
+    document.documentElement.style.overflow = "";
+    /* Restore position: iOS can jump to top when overflow changes */
+    if (savedScrollY) window.scrollTo(0, savedScrollY);
   }
   function step(d) {
     current = (current + d + sources.length) % sources.length;

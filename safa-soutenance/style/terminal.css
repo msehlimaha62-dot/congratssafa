@@ -36,7 +36,7 @@
 
 .terminal__screen {
   font-family: var(--mono);
-  font-size: clamp(.82rem, 3.2vw, .95rem);
+  font-size: clamp(.88rem, 3.2vw, .95rem);
   line-height: 1.7;
   color: var(--term-text);
   padding: 1.4rem 1.3rem 1.8rem;

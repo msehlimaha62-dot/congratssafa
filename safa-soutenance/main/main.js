@@ -11,23 +11,31 @@
   /* ---- detect mobile (touch-only device) ---- */
   const isMobile = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
 
+  let certShown = false;
+
   function showCertificate() {
+    if (certShown) return;  /* idempotent — safety timeout + normal path both call this */
+    certShown = true;
     if (terminal) terminal.style.display = "none";
-    certificate.hidden = false;
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => certificate.classList.add("is-in"));
-    });
+    certificate.removeAttribute("hidden");  /* removeAttribute is more reliable than .hidden=false on some iOS */
+    /* setTimeout instead of double-rAF: rAF can stall on backgrounded iOS tabs */
+    setTimeout(function () { certificate.classList.add("is-in"); }, 20);
   }
 
-  /* ---- page load sequence ----
-     Sur mobile : on cache le terminal direct et on montre le certificate.
-     Le terminal est cool sur desktop mais trop petit / inutilisable sur mobile.
-  */
-  if (reduceMotion || !window.runTerminal || isMobile) {
+  /* Safety net: reveal certificate after 10 s regardless — guards against any JS error
+     or rAF timing issue that prevents the terminal callback from firing. */
+  setTimeout(showCertificate, 10000);
+
+  /* ---- page load sequence ---- */
+  if (reduceMotion || !window.runTerminal) {
     if (terminal) terminal.style.display = "none";
     showCertificate();
   } else {
-    window.runTerminal(showCertificate);
+    try {
+      window.runTerminal(showCertificate);
+    } catch (e) {
+      showCertificate();
+    }
   }
 
   /* ---- scroll reveals ----
@@ -144,7 +152,14 @@
     if (playing) { pos = getScrollY(); paused = false; }
   }, { passive: true });
 
-  /* mobile pause : seulement pendant le scroll tactile */
+  /* mobile pause : pause autoscroll the instant the finger touches the screen —
+     touchmove fires too late and lets the RAF fight native scroll for a few frames */
+  window.addEventListener("touchstart", () => {
+    if (!playing) return;
+    touchScrolling = true;
+    clearTimeout(touchTimer);
+  }, { passive: true });
+
   window.addEventListener("touchmove", () => {
     if (!playing) return;
     touchScrolling = true;
