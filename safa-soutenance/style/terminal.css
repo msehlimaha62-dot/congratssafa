@@ -36,13 +36,14 @@
 
 .terminal__screen {
   font-family: var(--mono);
-  font-size: clamp(.78rem, 2.4vw, .95rem);
+  font-size: clamp(.82rem, 3.2vw, .95rem);
   line-height: 1.7;
   color: var(--term-text);
   padding: 1.4rem 1.3rem 1.8rem;
-  min-height: 230px;
+  min-height: 200px;
   white-space: pre-wrap;
-  word-break: break-word;
+  word-break: break-all;
+  overflow-x: hidden;
 }
 
 /* line roles */

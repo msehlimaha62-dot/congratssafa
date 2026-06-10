@@ -57,11 +57,13 @@
   position: absolute; background: none; border: none;
   color: var(--gold-bright); cursor: pointer;
   font-family: var(--display);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
-.lightbox__close { top: 3vh; right: 4vw; font-size: 2.6rem; line-height: 1; }
-.lightbox__nav { top: 50%; transform: translateY(-50%); font-size: 3.4rem; padding: 0 1rem; }
-.lightbox__nav--prev { left: 1vw; }
-.lightbox__nav--next { right: 1vw; }
+.lightbox__close { top: 3vh; right: 4vw; font-size: 2.6rem; line-height: 1; padding: .5rem; }
+.lightbox__nav { top: 50%; transform: translateY(-50%); font-size: 3.4rem; padding: .5rem 1.2rem; }
+.lightbox__nav--prev { left: max(1vw, 8px); }
+.lightbox__nav--next { right: max(1vw, 8px); }
 .lightbox__close:hover, .lightbox__nav:hover { color: #fff6d8; }
 .lightbox__close:focus-visible, .lightbox__nav:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 3px; }
 

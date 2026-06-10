@@ -84,4 +84,19 @@
     else if (e.key === "ArrowLeft") step(-1);
     else if (e.key === "ArrowRight") step(1);
   });
+
+  /* ---------- swipe gestures (mobile) ---------- */
+  let touchStartX = 0;
+  let touchStartY = 0;
+  box.addEventListener("touchstart", (e) => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  box.addEventListener("touchend", (e) => {
+    if (box.hidden) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return; // too short or vertical
+    step(dx < 0 ? 1 : -1);
+  }, { passive: true });
 })();
