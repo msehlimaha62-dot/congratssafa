@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Congratulations, Safa — Thesis Defense</title>
+  <meta name="description" content="A celebration of Safa Ben Hajali's thesis defense in Computer Science — Software Engineering & Information Systems." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style/main.css" />
+  <link rel="stylesheet" href="style/terminal.css" />
+  <link rel="stylesheet" href="style/journey.css" />
+  <link rel="stylesheet" href="style/gallery.css" />
+</head>
+<body>
+
+  <!-- ============ HERO : terminal -> certificate ============ -->
+  <header class="hero" id="top">
+    <div class="hero__grain" aria-hidden="true"></div>
+
+    <!-- Signature element: compile-your-success terminal -->
+    <section class="terminal" id="terminal" aria-label="Compilation sequence">
+      <div class="terminal__bar">
+        <span class="dot dot--r"></span>
+        <span class="dot dot--y"></span>
+        <span class="dot dot--g"></span>
+        <span class="terminal__title">success — bash — 80×24</span>
+      </div>
+      <pre class="terminal__screen" id="terminal-screen"><span class="terminal__cursor" id="cursor">█</span></pre>
+    </section>
+
+    <!-- Gilded reveal -->
+    <div class="certificate" id="certificate" hidden>
+      <p class="eyebrow">Thesis defense · passed with distinction</p>
+      <h1 class="certificate__name">
+        <span class="gild">Congratulations,</span>
+        <span class="gild gild--lg">Safa</span>
+      </h1>
+      <p class="certificate__sub">
+        Bachelor of Computer Science<br />
+        <em>Software Engineering &amp; Information Systems</em>
+      </p>
+      <button class="scroll-cue" id="tour-btn" type="button">Take the tour ↓</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ COMMIT HISTORY / TIMELINE ============ -->
+    <section class="journey" id="journey">
+      <p class="section-eyebrow" data-reveal>01 — The commit history</p>
+      <h2 class="journey__head" data-reveal>Three years, one branch, zero giving up.</h2>
+      <p class="journey__intro" data-reveal>
+        <span class="mono">$ git log --oneline --reverse</span>
+      </p>
+
+      <ol class="log" data-reveal>
+        <li class="commit">
+          <span class="commit__hash">a0c1f2e</span>
+          <span class="commit__tag">year 1</span>
+          <span class="commit__msg"><b>init:</b> enrolled in Computer Science</span>
+        </li>
+        <li class="commit">
+          <span class="commit__hash">3d9b7a4</span>
+          <span class="commit__tag">year 1</span>
+          <span class="commit__msg"><b>feat:</b> first program that compiled on its own</span>
+        </li>
+        <li class="commit">
+          <span class="commit__hash">7e44c10</span>
+          <span class="commit__tag">year 2</span>
+          <span class="commit__msg"><b>refactor:</b> chose the Software Engineering &amp; Information Systems track</span>
+        </li>
+        <li class="commit">
+          <span class="commit__hash">b21a8f9</span>
+          <span class="commit__tag">year 2</span>
+          <span class="commit__msg"><b>test:</b> survived every exam session — green across the board</span>
+        </li>
+        <li class="commit">
+          <span class="commit__hash">c58d013</span>
+          <span class="commit__tag">year 3</span>
+          <span class="commit__msg"><b>feat:</b> opened the final-year thesis project</span>
+        </li>
+        <li class="commit">
+          <span class="commit__hash">f9012ab</span>
+          <span class="commit__tag">year 3</span>
+          <span class="commit__msg"><b>fix:</b> countless late nights, coffee, and stubborn bugs</span>
+        </li>
+        <li class="commit">
+          <span class="commit__hash">e7740dd</span>
+          <span class="commit__tag">year 3</span>
+          <span class="commit__msg"><b>docs:</b> wrote, rewrote, and polished the whole thesis</span>
+        </li>
+        <li class="commit commit--release">
+          <span class="commit__hash">HEAD</span>
+          <span class="commit__tag commit__tag--gold">v1.0 🎓</span>
+          <span class="commit__msg"><b>release:</b> defended the thesis &amp; became an Engineer</span>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ============ LETTER ============ -->
+    <section class="letter" id="letter">
+      <p class="section-eyebrow" data-reveal>02 — A note for you</p>
+      <article class="note" data-reveal>
+        <p class="note__file"><span class="mono">$ cat note_to_safa.md</span></p>
+        <div class="note__body">
+          <p>Safa,</p>
+          <p>
+            You did it. Not in a single bright moment, but in a thousand quiet
+            ones — the early mornings, the chapters rewritten until they were
+            right, the days the work felt heavier than it should and you carried
+            it anyway.
+          </p>
+          <p>
+            I watched you turn doubt into drafts and drafts into a defense.
+            What stood in that room today wasn't just a thesis; it was every
+            late night that refused to break you.
+          </p>
+          <p>
+            So here's to you — patient, brilliant, and finally on the other side
+            of it. The hard part is done. Go be the engineer you already are.
+          </p>
+          <p class="note__sign">— with all my love,</p>
+          <p class="note__name gild">Maha Msahli</p>
+        </div>
+      </article>
+    </section>
+
+    <!-- ============ GALLERY ============ -->
+    <section class="gallery" id="gallery">
+      <p class="section-eyebrow" data-reveal>03 — The years behind the diploma</p>
+      <h2 class="gallery__head" data-reveal>A few frames from the journey</h2>
+      <div class="gallery__grid" id="gallery-grid" data-reveal>
+        <!-- images injected by main/gallery.js -->
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <p class="footer__line gild">// end of program</p>
+    <p class="footer__note">
+      From your friend, who watched every late night turn into this.<br />
+      Onward, Engineer. 🎓
+    </p>
+    <p class="footer__from">— with love, <span class="gild">Maha Msahli</span></p>
+    <a class="footer__top" href="#top">↑ back to the top</a>
+  </footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" hidden>
+    <button class="lightbox__close" id="lightbox-close" aria-label="Close">×</button>
+    <button class="lightbox__nav lightbox__nav--prev" id="lightbox-prev" aria-label="Previous">‹</button>
+    <img class="lightbox__img" id="lightbox-img" alt="" />
+    <button class="lightbox__nav lightbox__nav--next" id="lightbox-next" aria-label="Next">›</button>
+  </div>
+
+  <script src="main/terminal.js"></script>
+  <script src="main/gallery.js"></script>
+  <script src="main/main.js"></script>
+</body>
+</html>

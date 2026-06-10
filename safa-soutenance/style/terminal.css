@@ -1,0 +1,65 @@
+/* ============================================================
+   terminal.css — the "compile your success" terminal window
+   ============================================================ */
+
+.terminal {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column;
+  width: min(640px, 92vw);
+  padding: 0;
+  background: var(--term-bg);
+  border-radius: 12px;
+  box-shadow:
+    0 30px 60px -25px rgba(43, 36, 23, .55),
+    0 0 0 1px rgba(189, 150, 55, .25),
+    inset 0 0 0 1px rgba(255, 255, 255, .03);
+  overflow: hidden;
+  text-align: left;
+  transition: opacity .7s ease, transform .7s ease;
+}
+.terminal.is-done { opacity: 0; transform: scale(.97) translateY(-10px); pointer-events: none; }
+
+.terminal__bar {
+  display: flex; align-items: center; gap: .5rem;
+  padding: .7rem 1rem;
+  background: linear-gradient(180deg, #211e16, #1a1813);
+  border-bottom: 1px solid rgba(189, 150, 55, .18);
+}
+.dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+.dot--r { background: #d8635a; }
+.dot--y { background: #d9b24c; }
+.dot--g { background: #87a04f; }
+.terminal__title {
+  margin-left: auto; font-family: var(--mono);
+  font-size: .72rem; color: #8a7d5c; letter-spacing: .04em;
+}
+
+.terminal__screen {
+  font-family: var(--mono);
+  font-size: clamp(.78rem, 2.4vw, .95rem);
+  line-height: 1.7;
+  color: var(--term-text);
+  padding: 1.4rem 1.3rem 1.8rem;
+  min-height: 230px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* line roles */
+.t-prompt { color: #87a04f; }
+.t-cmd    { color: #ecd9a0; }
+.t-ok     { color: #9fd17a; }
+.t-info   { color: #d9b24c; }
+.t-bar    { color: var(--gold-bright); letter-spacing: .04em; }
+.t-dim    { color: #8a7d5c; }
+
+.terminal__cursor {
+  display: inline-block;
+  color: var(--gold-bright);
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .terminal { display: none; }
+}
