@@ -5,8 +5,11 @@
 
 (function () {
   const certificate = document.getElementById("certificate");
-  const terminal = document.getElementById("terminal");
+  const terminal    = document.getElementById("terminal");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- detect mobile (touch-only device) ---- */
+  const isMobile = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
 
   function showCertificate() {
     if (terminal) terminal.style.display = "none";
@@ -16,53 +19,100 @@
     });
   }
 
-  // ---- page load sequence ----
-  if (reduceMotion || !window.runTerminal) {
+  /* ---- page load sequence ----
+     Sur mobile : on cache le terminal direct et on montre le certificate.
+     Le terminal est cool sur desktop mais trop petit / inutilisable sur mobile.
+  */
+  if (reduceMotion || !window.runTerminal || isMobile) {
     if (terminal) terminal.style.display = "none";
     showCertificate();
   } else {
     window.runTerminal(showCertificate);
   }
 
-  // ---- scroll reveals ----
-  // threshold 0 + small rootMargin = fires as soon as element peeks in,
-  // more reliable on mobile where viewport is short
-  const reveals = document.querySelectorAll("[data-reveal]");
-  if ("IntersectionObserver" in window && !reduceMotion) {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) {
-          e.target.classList.add("is-in");
-          io.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0, rootMargin: "0px 0px -40px 0px" });
-    reveals.forEach((el) => io.observe(el));
-  } else {
+  /* ---- scroll reveals ----
+     Problème mobile : threshold: 0.15 nécessite que 15% de l'élément soit
+     visible. Sur un écran court avec de gros éléments, ça n'arrive jamais.
+     Fix : threshold 0 + rootMargin négatif réduit = se déclenche dès que
+     l'élément entre dans le viewport.
+     Fallback : si l'observer ne se déclenche pas après 2s (ex: Safari iOS
+     quirks), on force is-in sur tous les éléments non encore révélés.
+  */
+  const reveals = Array.from(document.querySelectorAll("[data-reveal]"));
+
+  function forceRevealAll() {
     reveals.forEach((el) => el.classList.add("is-in"));
   }
 
-  // ---- autoscroll tour ----
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    let revealCount = 0;
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add("is-in");
+          obs.unobserve(e.target);
+          revealCount++;
+        }
+      });
+    }, { threshold: 0, rootMargin: "0px 0px -20px 0px" });
+
+    reveals.forEach((el) => io.observe(el));
+
+    /* Fallback : si rien ne s'est révélé après 2.5s → force tout */
+    setTimeout(() => {
+      if (revealCount === 0) forceRevealAll();
+    }, 2500);
+
+  } else {
+    forceRevealAll();
+  }
+
+  /* ---- autoscroll tour ----
+     Problème mobile :
+     1. window.scrollTo() peut être ignoré sur iOS si html/body ont
+        overflow hidden ou si scroll-behavior: smooth est actif.
+     2. L'ancien code utilisait pointerdown pour pauser, ce qui pausait
+        aussi au tap du bouton.
+
+     Fix :
+     - Sur mobile on scrolle via el.scrollTop sur document.documentElement
+       avec fallback sur document.body (iOS Safari).
+     - On sépare pause desktop (mousedown) et pause mobile (touchmove).
+     - On force scrollBehavior: auto sur html ET body avant de commencer.
+  */
   const tourBtn = document.getElementById("tour-btn");
-  const html = document.documentElement;
-  const isMobile = () => window.matchMedia("(hover: none) and (pointer: coarse)").matches;
-  let raf = null;
-  let playing = false;
-  let paused = false;
-  let pos = 0;
-  let wheelTimer = null;
-  let touchScrolling = false;
-  let touchScrollTimer = null;
+  const html    = document.documentElement;
+  const body    = document.body;
+
+  let raf             = null;
+  let playing         = false;
+  let paused          = false;
+  let pos             = 0;
+  let wheelTimer      = null;
+  let touchScrolling  = false;
+  let touchTimer      = null;
+
+  function getScrollY() {
+    return window.scrollY || html.scrollTop || body.scrollTop || 0;
+  }
+
+  function doScrollTo(y) {
+    /* window.scrollTo peut être ignoré sur certains iOS — on force les deux */
+    window.scrollTo(0, y);
+    html.scrollTop = y;
+    body.scrollTop = y;
+  }
 
   function atBottom() {
-    return window.innerHeight + window.scrollY >= document.body.scrollHeight - 2;
+    const scrollable = document.body.scrollHeight - window.innerHeight;
+    return pos >= scrollable - 2;
   }
 
   function scrollStep() {
     if (!playing) return;
     if (!paused && !touchScrolling) {
-      pos += isMobile() ? 0.7 : 0.55;
-      window.scrollTo(0, pos);
+      pos += isMobile ? 0.8 : 0.55;
+      doScrollTo(pos);
       if (atBottom()) { stopTour(); return; }
     }
     raf = requestAnimationFrame(scrollStep);
@@ -71,8 +121,10 @@
   function startTour() {
     if (playing) return;
     playing = true; paused = false; touchScrolling = false;
-    pos = window.scrollY;
+    pos = getScrollY();
+    /* désactiver smooth scroll sur html ET body */
     html.style.scrollBehavior = "auto";
+    body.style.scrollBehavior = "auto";
     tourBtn && tourBtn.classList.add("is-playing");
     raf = requestAnimationFrame(scrollStep);
   }
@@ -82,30 +134,33 @@
     playing = false; paused = false; touchScrolling = false;
     if (raf) cancelAnimationFrame(raf);
     html.style.scrollBehavior = "";
+    body.style.scrollBehavior = "";
     tourBtn && tourBtn.classList.remove("is-playing");
   }
 
-  // desktop: mouse held pauses, released resumes
+  /* desktop pause */
   window.addEventListener("mousedown", () => { if (playing) paused = true; }, { passive: true });
-  window.addEventListener("mouseup",   () => { if (playing) { pos = window.scrollY; paused = false; } }, { passive: true });
+  window.addEventListener("mouseup",   () => {
+    if (playing) { pos = getScrollY(); paused = false; }
+  }, { passive: true });
 
-  // mobile: touchmove = user is manually scrolling → pause until they stop
+  /* mobile pause : seulement pendant le scroll tactile */
   window.addEventListener("touchmove", () => {
     if (!playing) return;
     touchScrolling = true;
-    clearTimeout(touchScrollTimer);
-    touchScrollTimer = setTimeout(() => {
-      pos = window.scrollY;
+    clearTimeout(touchTimer);
+    touchTimer = setTimeout(() => {
+      pos = getScrollY();
       touchScrolling = false;
-    }, 600);
+    }, 700);
   }, { passive: true });
 
-  // desktop wheel
+  /* desktop wheel */
   window.addEventListener("wheel", () => {
     if (!playing) return;
     paused = true;
     clearTimeout(wheelTimer);
-    wheelTimer = setTimeout(() => { pos = window.scrollY; paused = false; }, 900);
+    wheelTimer = setTimeout(() => { pos = getScrollY(); paused = false; }, 900);
   }, { passive: true });
 
   if (tourBtn) {
@@ -117,4 +172,4 @@
       if (playing) stopTour(); else startTour();
     });
   }
-})();
+})();git 
